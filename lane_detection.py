@@ -48,9 +48,6 @@ class LaneDetection:
 
         rs_binary = cv2.bitwise_and(s_binary, r_thresh)
 
-        ### Combine the possible lane lines with the possible lane line edges #####
-        # If you show rs_binary visually, you'll see that it is not that different
-        # from this return value. The edges of lane lines are thin lines of pixels.
         lane_line_markings = cv2.bitwise_or(rs_binary, binary.astype(
             np.uint8))
 
@@ -198,8 +195,9 @@ class LaneDetection:
         self.frame = cv2.resize(frame, (self.width, self.height), interpolation = cv2.INTER_AREA)
 
         frame = self.preprocessing()
-        warped_frame = self.perspective_transform(frame)
 
+        warped_frame = self.perspective_transform(frame)
+        return frame, warped_frame
         #cv2.imshow("orig_frame", lane_detection.frame)
         #cv2.imshow("perspective_transform", warped_frame)
 
@@ -207,3 +205,16 @@ class LaneDetection:
         result = self.overlay_lane_lines(warped_frame)
 
         return result
+
+
+
+
+if __name__ == '__main__':
+    lane_detection = LaneDetection()
+
+    frame = cv2.imread("test_data/test.png")
+
+    frame, warped_frame = lane_detection.detect(frame=frame)
+
+    cv2.imshow("orig_frame", frame)
+    cv2.imshow("perspective_transform", warped_frame)
