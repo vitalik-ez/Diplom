@@ -1,8 +1,9 @@
 from ui_main_window import Ui_MainWindow
-
 from PyQt5 import QtCore, QtGui, QtWidgets
 import cv2
 import qimage2ndarray
+
+
 # MainWindow
 class View(QtWidgets.QMainWindow):
 

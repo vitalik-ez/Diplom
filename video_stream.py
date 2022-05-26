@@ -16,7 +16,7 @@ import time
 
 Gst.init(None)
 
-video_path = "/home/vitalii/Desktop/DriverAssistance/test_data/german.mp4"
+video_path = "/home/vitalii/Desktop/DriverAssistance/test_data/dubai_traffic_sign.mp4"
 
 '''
 def on_new_sample(app_sink):

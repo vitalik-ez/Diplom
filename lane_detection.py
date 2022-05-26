@@ -2,12 +2,16 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-
 class LaneDetection:
 
     def __init__(self) -> None:
-        self.height = 600
-        self.width = 900
+        self.height = 720
+        self.width = 1280
+
+        #self.orig_frame = orig_frame
+
+        # (Width, Height) of the original video frame (or image)
+        self.orig_image_size = (self.width, self.height)#self.orig_frame.shape[::-1][1:]
 
     def sobel_edge_detection(self, frame, kernel=3):
         sobelx = cv2.Sobel(src=frame, ddepth=cv2.CV_64F, dx=1, dy=0, ksize=kernel)
@@ -54,18 +58,47 @@ class LaneDetection:
         return lane_line_markings
 
     def perspective_transform(self, frame):
-        length_line = 380
-        orig_img_coord = np.float32([[410, length_line], [510, length_line], [120, self.height], [770, self.height]])
+        length_line = self.height - 250
+        #orig_img_coord = np.float32([[490, 450], [200, 720],  [800, length_line], [1230, self.height]])
+        self.roi_points = np.float32([(490, 450), (110, 720),(1230, 720), (800, 450)])
+
         #for x in range(4):
-        #    frame = cv2.circle(image, (int(orig_img_coord[x][0]), int(orig_img_coord[x][1])), 10, (0,0,255), -1)
-
+        #    image = cv2.circle(image, (int(orig_img_coord[x][0]), int(orig_img_coord[x][1])), 10, (0,0,255), -1)
+        #cv2_imshow(image)
         height, width = 350, 450
-        perspective_coordinates = np.float32([[0,0], [width, 0], [0, height], [width, height]])
 
-        matrix = cv2.getPerspectiveTransform(orig_img_coord, perspective_coordinates)
-        transform_img = cv2.warpPerspective(frame, matrix, (width, height))
+        self.padding = int(0.25 * width) # padding from side of the image in pixels
+        self.desired_roi_points = np.float32([
+          [self.padding, 0], # Top-left corner
+          [self.padding, self.orig_image_size[1]], # Bottom-left corner         
+          [self.orig_image_size[
+            0]-self.padding, self.orig_image_size[1]], # Bottom-right corner
+          [self.orig_image_size[0]-self.padding, 0] # Top-right corner
+        ]) 
+
+        perspective_coordinates = np.float32([[self.padding, 0], 
+                                              [self.padding, self.width], 
+                                              [self.height-self.padding, self.width], 
+                                              [self.height-self.padding, 0]])
+
+        '''
+         # Calculate the transformation matrix
+        self.transformation_matrix = cv2.getPerspectiveTransform(
+          self.roi_points, self.desired_roi_points)
+    
+        # Calculate the inverse transformation matrix           
+        self.inv_transformation_matrix = cv2.getPerspectiveTransform(
+          self.desired_roi_points, self.roi_points)
+    
+        # Perform the transform using the transformation matrix
+        self.warped_frame = cv2.warpPerspective(
+          frame, self.transformation_matrix, self.orig_image_size, flags=(
+        cv2.INTER_LINEAR)) 
+        '''
+        matrix = cv2.getPerspectiveTransform(self.roi_points, self.desired_roi_points)
+        transform_img = cv2.warpPerspective(frame, matrix, self.orig_image_size, flags=(cv2.INTER_LINEAR))
         
-        self.inverse_matrix = cv2.getPerspectiveTransform(perspective_coordinates, orig_img_coord)
+        self.inverse_matrix = cv2.getPerspectiveTransform(self.desired_roi_points, self.roi_points)
         return transform_img
 
     def sliding_windows(self, warped_frame):
@@ -192,12 +225,12 @@ class LaneDetection:
 
 
     def detect(self, frame):
-        self.frame = cv2.resize(frame, (self.width, self.height), interpolation = cv2.INTER_AREA)
+        self.frame = frame #cv2.resize(frame, (self.width, self.height), interpolation = cv2.INTER_AREA)
 
         frame = self.preprocessing()
 
         warped_frame = self.perspective_transform(frame)
-        return frame, warped_frame
+        #return frame, warped_frame
         #cv2.imshow("orig_frame", lane_detection.frame)
         #cv2.imshow("perspective_transform", warped_frame)
 
@@ -205,6 +238,9 @@ class LaneDetection:
         result = self.overlay_lane_lines(warped_frame)
 
         return result
+
+    
+
 
 
 
