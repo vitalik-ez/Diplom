@@ -10,7 +10,7 @@ class TrafficSign:
         self.model.cuda()
 
     def detect(self, frame):
-        self.model.conf = 0.2  # confidence threshold (0-1)
+        self.model.conf = 0.4  # confidence threshold (0-1)
         self.model.iou = 0.2  # NMS IoU threshold (0-1)
         # (optional list) filter by class, i.e. = [0, 15, 16] for persons, cats and dogs
 
@@ -25,7 +25,7 @@ class TrafficSign:
             y2 = int(box['ymax'])
             cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 2)
             cv2.putText(frame, box['name'], (x1, y1-10), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0,255,0), 1)
-        return frame
+        return frame, results
 
 
 if __name__ == '__main__':

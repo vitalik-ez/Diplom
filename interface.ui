@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1348</width>
+    <width>1524</width>
     <height>928</height>
    </rect>
   </property>
@@ -31,7 +31,7 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>1331</width>
+      <width>1502</width>
       <height>911</height>
      </rect>
     </property>
@@ -40,7 +40,7 @@
       <widget class="QWidget" name="VideoContainer" native="true">
        <property name="minimumSize">
         <size>
-         <width>1300</width>
+         <width>1500</width>
          <height>800</height>
         </size>
        </property>
@@ -49,7 +49,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>1331</width>
+          <width>1501</width>
           <height>1350</height>
          </rect>
         </property>

@@ -18,6 +18,7 @@ Gst.init(None)
 
 #video_path = "test_data/dubai_traffic_sign.mp4"
 video_path = 'test_data/test7.mp4'
+#video_path = 'test_data/test1.mp4'
 
 '''
 def on_new_sample(app_sink):

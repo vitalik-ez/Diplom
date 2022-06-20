@@ -17,7 +17,7 @@ class View(QtWidgets.QMainWindow):
         #self.setup_camera()
 
 
-    def video_stream_container(self, width = 1280, height = 720):
+    def video_stream_container(self, width = 1380, height = 720):
         self.video_size = QtCore.QSize(width, height)
         self.camera_capture = cv2.VideoCapture(0)
         
