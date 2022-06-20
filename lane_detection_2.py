@@ -55,15 +55,24 @@ class Lane:
         height = self.orig_image_size[1]
         self.width = width
         self.height = height
-        print(self.width, self.height)
 
         length_line = self.height - 250
         self.roi_points = np.float32([
-            (490, 450),  # Top-left corner
+            (550, 540),  # Top-left corner
+            (100, 720),  # Bottom-left corner
+            (1050, 720),  # Bottom-right corner
+            (650, 540),  # Top-right corner
+        ])
+
+        '''
+        (490, 450),  # Top-left corner
             (110, 720),  # Bottom-left corner
             (1230, 720),  # Bottom-right corner
-            (800, 450),  # Top-right corner
-        ])
+        (800, 450),  # Top-right corner
+        '''
+
+
+
         '''
         self.roi_points = np.float32([
         (274,184), # Top-left corner
@@ -480,7 +489,10 @@ class Lane:
     def perspective_transform(self, frame=None, plot=False):
 
         if frame is None:
-            frame = self.lane_line_markings
+            grayImage = cv2.cvtColor(self.orig_frame, cv2.COLOR_BGR2GRAY)
+            (thresh, blackAndWhiteImage) = cv2.threshold(grayImage, 127, 255, cv2.THRESH_BINARY)
+            frame = blackAndWhiteImage
+            
 
         # Calculate the transformation matrix
         self.transformation_matrix = cv2.getPerspectiveTransform(
@@ -529,7 +541,7 @@ class Lane:
 def detect(original_frame):
 
     lane_obj = Lane(orig_frame=original_frame)
-
+    #return cv2.polylines(original_frame, np.int32([lane_obj.roi_points]), True, (147, 20, 255), 3)
     # Perform thresholding to isolate lane lines
     lane_line_markings = lane_obj.get_line_markings()
 
@@ -539,6 +551,7 @@ def detect(original_frame):
     # Perform the perspective transform to generate a bird's eye view
     # If Plot == True, show image with new region of interest
     warped_frame = lane_obj.perspective_transform(plot=False)
+    #return warped_frame
     # Generate the image histogram to serve as a starting point
     # for finding lane line pixels
     histogram = lane_obj.calculate_histogram(plot=False)
